@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">BrandStore</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="favourite">Favourite</string>
+    <string name="settings">Settings</string>
+    <string name="it_is_favourite_fragment">It is Favourite Fragment</string>
+    <string name="it_is_home_fragment">It is Home Fragment</string>
+    <string name="it_is_settings_fragment">It is Settings Fragment</string>
+    <string name="log_out">Log Out</string>
+    <string name="home">HomeFragment</string>
+    <string name="more">More</string>
+    <string name="about">About</string>
+    <string name="it_is_about_fragment">It is About Fragment</string>
+    <string name="history">History</string>
+    <string name="it_is_history_fragment">It is History Fragment</string>
+    <string name="basket">Basket</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="don_t_have_an_account_sing_up">Don\'t have an account? Sing Up</string>
+    <string name="have_an_account_sing_in">Have an account? Sing In</string>
+    <string name="register">register</string>
+    <string name="create_a_new_password">Please enter your phone number</string>
+    <string name="create_a_new_login">Please enter your phone number</string>
+    <string name="it_is_basket_fragment">It is Basket Fragment</string>
+    <string name="kg_phone_code">+996</string>
+</resources>

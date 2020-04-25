@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.brandstore.HomeFragment.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/basketFragment"
+        android:name="com.example.brandstore.BasketFragment.BasketFragment"
+        android:label="@string/basket"
+        tools:layout="@layout/fragment_basket" />
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.brandstore.FavouriteFragment.FavouriteFragment"
+        android:label="@string/favourite"
+        tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.brandstore.HistoryFragment.HistoryFragment"
+        android:label="@string/history"
+        tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.brandstore.SettingsFragment.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.brandstore.AboutFragment.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
+</navigation>
