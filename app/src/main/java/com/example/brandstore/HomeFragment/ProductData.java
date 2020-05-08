@@ -1,29 +1,28 @@
 package com.example.brandstore.HomeFragment;
 
-public class ProductData {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private String mName;
-    private String desck;
+public class ProductData  implements Parcelable {
+
+    private String name;
     private String price;
-    private String mImageUrl;
+    private String imageUrl;
 
     public ProductData() {
     }
-
-    public String getmName() {
-        return mName;
+    public ProductData(String name, String price, String imageUrl) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
     }
 
-    public void setmName(String mName) {
-        this.mName = mName;
+    public String getName() {
+        return name;
     }
 
-    public String getDesck() {
-        return desck;
-    }
-
-    public void setDesck(String desck) {
-        this.desck = desck;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPrice() {
@@ -34,11 +33,40 @@ public class ProductData {
         this.price = price;
     }
 
-    public String getmImageUrl() {
-        return mImageUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setmImageUrl(String mImageUrl) {
-        this.mImageUrl = mImageUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(price);
+        dest.writeString(imageUrl);
+    }
+
+    public static final Creator<ProductData> CREATOR = new Creator<ProductData>() {
+        @Override
+        public ProductData createFromParcel(Parcel in) {
+            return new ProductData(in);
+        }
+
+        @Override
+        public ProductData[] newArray(int size) {
+            return new ProductData[size];
+        }
+    };
+    private ProductData(Parcel in) {
+        name = in.readString();
+        price = in.readString();
+        imageUrl = in.readString();
     }
 }

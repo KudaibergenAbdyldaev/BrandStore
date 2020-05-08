@@ -1,7 +1,5 @@
 package com.example.brandstore;
 
-
-
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -19,8 +17,11 @@ import com.google.android.gms.tasks.TaskExecutors;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -40,10 +41,12 @@ public class VerifyPhoneActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        assert verificationId != null;
+
         progressBar = findViewById(R.id.progressBar);
         editText = findViewById(R.id.editTextCode);
-        String phonenumber = getIntent().getStringExtra("mobile");
-        sendVerificationCode(phonenumber);
+        String phoneNumber = getIntent().getStringExtra("mobile");
+        sendVerificationCode(phoneNumber);
 
         findViewById(R.id.buttonSignIn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,10 +77,27 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            String phonenumber = getIntent().getStringExtra("mobile");
+                            sendVerificationCode(phonenumber);
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            assert firebaseUser != null;
+                            String userId = firebaseUser.getUid();
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
-                            Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put("id", userId);
+                            map.put("phone", phonenumber);
+                            reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);
+                                        Toast.makeText(VerifyPhoneActivity.this, "Добро пожаловать!", Toast.LENGTH_SHORT).show();
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                            });
 
                         } else {
                             Toast.makeText(VerifyPhoneActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
@@ -90,7 +110,7 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 number,
-                20,
+                60,
                 TimeUnit.SECONDS,
                 TaskExecutors.MAIN_THREAD,
                 mCallBack
