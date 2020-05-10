@@ -25,4 +25,6 @@
     <string name="it_is_basket_fragment">It is Basket Fragment</string>
     <string name="kg_phone_code">+996</string>
     <string name="btn_add">Добавить</string>
+    <string name="name">name</string>
+    <string name="over_price">Over Price</string>
 </resources>

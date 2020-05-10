@@ -17,11 +17,9 @@ public class HomeViewModel extends ViewModel {
     private ArrayList<ProductData> productArrayList;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Foods");
 
-
     public HomeViewModel() {
         productLiveData = new MutableLiveData<>();
 
-        // call your Rest API in init method
         init();
     }
 
@@ -51,6 +49,5 @@ public class HomeViewModel extends ViewModel {
 
             }
         });
-
     }
 }
