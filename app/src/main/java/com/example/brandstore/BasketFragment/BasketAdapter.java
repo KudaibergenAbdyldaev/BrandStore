@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.brandstore.Data.BasketData;
 import com.example.brandstore.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,15 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.Holder>{
     public void onBindViewHolder(@NonNull BasketAdapter.Holder holder, int position) {
         BasketData basketData = dataList.get(position);
         holder.textViewTitle.setText(basketData.getProduct_name());
-//        holder.imageView.setText(basketData.getImageView());
+        Picasso.get()
+                .load(basketData.getImageView())
+                .into(holder.imageView);
         holder.overPrice.setText(String.valueOf(basketData.getCount()));
         holder.textViewAmount.setText(String.valueOf(basketData.getAmount()));
+    }
+
+    public BasketData getDataAt(int position){
+        return dataList.get(position);
     }
 
     @Override

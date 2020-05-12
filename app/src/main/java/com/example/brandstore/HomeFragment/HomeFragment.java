@@ -23,8 +23,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.brandstore.BasketFragment.BasketViewModel;
 import com.example.brandstore.Data.BasketData;
 import com.example.brandstore.R;
+import com.example.brandstore.SharedViewModel.SharedViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,10 +40,12 @@ import java.util.ArrayList;
 public class HomeFragment  extends Fragment implements LifecycleOwner{
 
     private int count;
-    private int amount;
+    private int amount = 1;
     private RecyclerView recyclerView;
     private HomeAdapter homeAdapter;
     private HomeViewModel viewModel;
+    private BasketViewModel basketViewModel;
+    private SharedViewModel sharedViewModel;
     private ArrayList<ProductData> list;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Foods");;
     public HomeFragment(){
@@ -57,20 +61,22 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
         //Using code from
         //https://developer.android.com/topic/libraries/architecture/viewmodel
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        basketViewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), userListUpdateObserver);
         list = new ArrayList<>();
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         getFirebase();
         return view;
 
     }
     private Observer<ArrayList<ProductData>> userListUpdateObserver = new Observer<ArrayList<ProductData>>() {
         @Override
-        public void onChanged(ArrayList<ProductData> userArrayList) {
+        public void onChanged(final ArrayList<ProductData> userArrayList) {
             homeAdapter = new HomeAdapter(requireActivity(),userArrayList);
             recyclerView.setAdapter(homeAdapter);
             homeAdapter.setOnClickListener(new HomeAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(int position) {
+                public void onItemClick(final int position) {
                     final ProductData productData = list.get(position);
                     LayoutInflater inflater = LayoutInflater.from(getContext());
                     final View view = inflater.inflate(R.layout.item_dialog, null);
@@ -120,16 +126,14 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     add_basket.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
-                            Bundle result = new Bundle();
-                            result.putString("name", Integer.toString(amount));
-//                            result.putString("count", String.valueOf(count));
-//                            result.putString("imageView", String.valueOf(imageView));
-//                            result.putString("amount", String.valueOf(amount));
-
-                            HomeFragment fragment =new HomeFragment();
-                            fragment.setArguments(result);
+                            BasketData basketData = new BasketData(productData.getName(), productData.getImageUrl(), count,amount);
+                            basketViewModel.insert(basketData);
                             dialogSheet.dismiss();
+                            //use to pass data between fragments
+//                            sharedViewModel.setTextName(txt_name.getText());
+//                            sharedViewModel.setTextImage(productData.getImageUrl());
+//                            sharedViewModel.setTextAmount(txt_amount.getText());
+//                            sharedViewModel.setTextCount(txt_count.getText());
                         }
                     });
                     dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {

@@ -27,4 +27,5 @@
     <string name="btn_add">Добавить</string>
     <string name="name">name</string>
     <string name="over_price">Over Price</string>
+    <string name="delete_all">Delete All</string>
 </resources>

@@ -38,9 +38,9 @@ public abstract class BasketDatabase extends RoomDatabase {
         }
         @Override
         protected Void doInBackground(Void... voids) {
-            basketDao.insert(new BasketData("Title 1", "Description 1", 100,2));
-            basketDao.insert(new BasketData("Title 2", "Description 2", 100,3));
-            basketDao.insert(new BasketData("Title 3", "Description 3", 100,4));
+//            basketDao.insert(new BasketData("Title 1", "Description 1", "100","2"));
+//            basketDao.insert(new BasketData("Title 2", "Description 2", "100","3"));
+//            basketDao.insert(new BasketData("Title 3", "Description 3", "100","4"));
             return null;
         }
     }
