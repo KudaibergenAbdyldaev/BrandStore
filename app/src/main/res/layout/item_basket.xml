@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,94 +36,91 @@
 
             <TextView
                 android:id="@+id/txt_name_basket"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="@string/name"
+                android:textAlignment="textStart"
                 android:textColor="@color/color_black"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardView3"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.352" />
 
-            <TextView
-                android:id="@+id/txt_over_price"
+            <LinearLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/over_price"
-                android:textColor="@color/color_black"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/txt_name_basket"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/txt_name_basket"
                 app:layout_constraintTop_toBottomOf="@+id/txt_name_basket"
-                app:layout_constraintVertical_bias="0.074" />
+                app:layout_constraintVertical_bias="0.0">
+
+                <TextView
+                    android:id="@+id/txt_over_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:text="100000"
+                    android:textColor="@color/color_black" />
+
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="сом"
+                    android:textColor="@color/color_black" />
+
+
+            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView3"
-                android:layout_width="125dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                app:cardBackgroundColor="@color/color_black"
-                app:cardCornerRadius="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:cardCornerRadius="4dp"
+                app:cardPreventCornerOverlap="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintEnd_toEndOf="@+id/txt_name_basket"
+                app:layout_constraintHorizontal_bias="0.35"
+                app:layout_constraintStart_toStartOf="@+id/txt_name_basket"
+                app:layout_constraintTop_toBottomOf="@+id/txt_name_basket"
+                app:layout_constraintVertical_bias="0.0">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/txt_minus_basket"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="-"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txt_amount_basket"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="1"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/color_black" />
 
                     <TextView
-                        android:id="@+id/txt_price_basket"
+                        android:id="@+id/textView13"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="+"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:text=" - х"
+                        android:textColor="@color/color_black" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="сом"
-                android:textColor="@color/color_black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardView3"
-                app:layout_constraintHorizontal_bias="0.145"
-                app:layout_constraintStart_toEndOf="@+id/txt_over_price"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.647" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

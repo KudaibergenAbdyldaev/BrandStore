@@ -28,4 +28,8 @@
     <string name="name">name</string>
     <string name="over_price">Over Price</string>
     <string name="delete_all">Delete All</string>
+    <string name="delete">Delete?</string>
+    <string name="delete_this">Are you sure want to delete this?</string>
+    <string name="btn_order">Заказать</string>
+    <string name="address_dev">Address to delivery</string>
 </resources>

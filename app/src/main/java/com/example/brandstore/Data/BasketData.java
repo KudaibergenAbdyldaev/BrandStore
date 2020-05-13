@@ -1,31 +1,31 @@
 package com.example.brandstore.Data;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "basket_table")
 public class BasketData {
 
     @PrimaryKey(autoGenerate = true)
-    public long id;
+    public int id;
     public String product_name;
     public String imageView;
-    public long count;
+    public int count;
     public int amount;
 
-    public BasketData(String product_name, String imageView, long count, int amount) {
+    public BasketData(String product_name, String imageView, int count, int amount) {
         this.product_name = product_name;
         this.imageView = imageView;
         this.count = count;
         this.amount = amount;
     }
 
-
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,11 +45,11 @@ public class BasketData {
         this.imageView = imageView;
     }
 
-    public long getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(long count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
