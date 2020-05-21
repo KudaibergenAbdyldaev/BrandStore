@@ -78,7 +78,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="monospace"
-                    android:gravity="end"
                     android:text="-"
                     android:textAlignment="center"
                     android:textColor="@color/white"
@@ -103,7 +102,6 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
                     android:fontFamily="monospace"
-                    android:gravity="start"
                     android:text="+"
                     android:textAlignment="center"
                     android:textColor="@color/white"
@@ -113,21 +111,21 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/add_basket"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_add_bg"
-            android:text="@string/btn_add"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/cardView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+        android:id="@+id/add_basket"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/btn_add_bg"
+        android:text="@string/btn_ready"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
         <LinearLayout
             android:id="@+id/linearLayout"

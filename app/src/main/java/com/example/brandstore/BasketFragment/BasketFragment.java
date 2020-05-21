@@ -1,6 +1,7 @@
 package com.example.brandstore.BasketFragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,12 +14,14 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 import com.example.brandstore.Data.BasketData;
 import com.example.brandstore.HomeFragment.ProductData;
 import com.example.brandstore.R;
+import com.example.brandstore.SharedViewModel.SharedViewModel;
 import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
@@ -36,15 +40,18 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BasketFragment extends Fragment {
+public class BasketFragment extends Fragment{
 
 
     private BasketViewModel viewModel;
     private CardView cardView;
     private int count;
     private int amount;
-
-
+    private int totalPrice;
+    private BasketAdapter adapter;
+    private RecyclerView recyclerView;
+    private static final String TAG = "MyActivity";
+    private List<BasketData> dataList = new ArrayList<>();
     // use to pass data between fragments
 //    private SharedViewModel sharedViewModel;
     public BasketFragment() {
@@ -56,22 +63,47 @@ public class BasketFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_basket, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewBasket);
+        recyclerView = view.findViewById(R.id.recyclerViewBasket);
         cardView = view.findViewById(R.id.cardView_basket);
+        final TextView textView = view.findViewById(R.id.text_over_price);
         cardView.setBackgroundResource(R.drawable.card_corner);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        final BasketAdapter adapter = new BasketAdapter();
+        adapter  = new BasketAdapter();
         recyclerView.setAdapter(adapter);
         this.setHasOptionsMenu(true);
-
+//        grandTotal(dataList);
+//        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+//
+//        sharedViewModel.getTextCount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
+//            @Override
+//            public void onChanged(@Nullable CharSequence charSequence) {
+//
+//            }
+//        });
         viewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<BasketData>>() {
             @Override
             public void onChanged(@Nullable List<BasketData> data) {
                 adapter.submitList(data);
+                assert data != null;
+                textView.setText(String.valueOf(grandTotal(data)));
             }
         });
+
+        adapterOnItemTouch();
+        adapterSetOnClickListener();
+        return view;
+    }
+    private int grandTotal(List<BasketData> items){
+        int totalPrice1 = 0;
+        for(int i = 0 ; i < items.size(); i++) {
+            totalPrice1 += items.get(i).getCount();
+        }
+        Log.i(TAG, Integer.toString(totalPrice1));
+        return totalPrice1;
+    }
+    private void adapterOnItemTouch() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -84,13 +116,14 @@ public class BasketFragment extends Fragment {
                 Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
+    }
 
+    private void adapterSetOnClickListener() {
         adapter.setOnItemClickListener(new BasketAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(final BasketData data) {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
-
-                final View view = inflater.inflate(R.layout.item_dialog, null);
+                final View view = inflater.inflate(R.layout.item_dialog_basket, null);
                 final DialogSheet dialogSheet = new DialogSheet(getContext())
                         .setSingleLineTitle(true)
                         .setColoredNavigationBar(true)
@@ -102,19 +135,19 @@ public class BasketFragment extends Fragment {
                 final TextView txt_minus = view.findViewById(R.id.txt_minus);
                 final TextView txt_amount = view.findViewById(R.id.txt_amount);
                 final Button add_basket = view.findViewById(R.id.add_basket);
-                final int totalPrice = data.getCount();
+                totalPrice = Integer.parseInt(data.getPrice());
+                amount = data.getAmount();
+                count = count + data.getCount();
 
                 txt_name.setText(data.getProduct_name());
                 txt_count.setText(Integer.toString(data.getCount()));
                 Picasso.get().load(data.getImageView()).fit().centerCrop().into(imageView);
 
-                count = count + totalPrice;
-                amount = data.getAmount();
                 txt_amount.setText(Integer.toString(amount));
                 txt_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        count = count + totalPrice;
+                        count = count+totalPrice;
                         amount++;
                         txt_count.setText(Integer.toString(count));
                         txt_amount.setText(Integer.toString(amount));
@@ -124,8 +157,9 @@ public class BasketFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (amount == 1) {
+
                         } else {
-                            count = count - totalPrice;
+                            count = count-totalPrice;
                             amount--;
                             txt_amount.setText(Integer.toString(amount));
                             txt_count.setText(Integer.toString(count));
@@ -137,7 +171,10 @@ public class BasketFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         int id = data.getId();
-                        BasketData basketData = new BasketData(data.getProduct_name(), data.getImageView(), count,amount);
+                        BasketData basketData = new BasketData(data.getProduct_name(),
+                                data.getImageView(),
+                                data.getPrice(),count,amount
+                        );
                         basketData.setId(id);
                         viewModel.update(basketData);
                         dialogSheet.dismiss();
@@ -152,13 +189,13 @@ public class BasketFragment extends Fragment {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         count = 0;
+                        amount = data.getAmount();
                     }
                 });
                 dialogSheet.show();
 
             }
         });
-        return view;
     }
 
     @Override
@@ -169,39 +206,36 @@ public class BasketFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.delete_all:
-                final DialogSheet dialogSheet = new DialogSheet(getContext());
-                dialogSheet.setSingleLineTitle(true)
-                        .setTitle(R.string.delete)
-                        .setMessage(R.string.delete_this)
-                        .setColoredNavigationBar(true)
-                        .setButtonsColorRes(R.color.color_black)
-                        .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                viewModel.deleteAllNotes();
-                                Toast.makeText(getActivity(), "All files deleted", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialogSheet.dismiss();
-                            }
-                        }).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.delete_all) {
+            final DialogSheet dialogSheet = new DialogSheet(getContext());
+            dialogSheet.setSingleLineTitle(true)
+                    .setTitle(R.string.delete)
+                    .setMessage(R.string.delete_this)
+                    .setColoredNavigationBar(true)
+                    .setButtonsColorRes(R.color.color_black)
+                    .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewModel.deleteAllNotes();
+                            Toast.makeText(getActivity(), "All files deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialogSheet.dismiss();
+                        }
+                    }).show();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
-
     //use to pass data between fragments
 //    @Override
 //    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 //        super.onActivityCreated(savedInstanceState);
 
-//        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+//        SharedViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 //        sharedViewModel.getTextName().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
 //            @Override
 //            public void onChanged(@Nullable CharSequence charSequence) {
@@ -224,7 +258,7 @@ public class BasketFragment extends Fragment {
 //        sharedViewModel.getTextCount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
 //            @Override
 //            public void onChanged(@Nullable CharSequence charSequence) {
-//                text_count.setText(charSequence);
+////                text_count.setText(charSequence);
 //            }
 //        });
 //    }

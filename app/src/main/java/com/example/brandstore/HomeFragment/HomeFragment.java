@@ -101,8 +101,6 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                         @Override
                         public void onClick(View v) {
                             count = count + totalPrice;
-                            CharSequence zz = txt_amount.getText();
-                            amount = Integer.parseInt(zz.toString());
                             amount++;
                             txt_count.setText(Integer.toString(count));
                             txt_amount.setText(Integer.toString(amount));
@@ -111,8 +109,6 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     txt_minus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            CharSequence zz = txt_amount.getText();
-                            amount = Integer.parseInt(zz.toString());
                             if (amount == 1) {
                             } else {
                                 count = count - totalPrice;
@@ -126,20 +122,25 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     add_basket.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            BasketData basketData = new BasketData(productData.getName(), productData.getImageUrl(), count,amount);
+                            BasketData basketData = new BasketData(productData.getName(),
+                                    productData.getImageUrl(),
+                                    productData.getPrice(),
+                                    count,amount
+                            );
                             basketViewModel.insert(basketData);
                             dialogSheet.dismiss();
                             //use to pass data between fragments
 //                            sharedViewModel.setTextName(txt_name.getText());
 //                            sharedViewModel.setTextImage(productData.getImageUrl());
 //                            sharedViewModel.setTextAmount(txt_amount.getText());
-//                            sharedViewModel.setTextCount(txt_count.getText());
+//                            sharedViewModel.setTextCount(productData.getPrice());
                         }
                     });
                     dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                             count = 0;
+                            amount =1;
                         }
                     });
                     dialogSheet.show();
