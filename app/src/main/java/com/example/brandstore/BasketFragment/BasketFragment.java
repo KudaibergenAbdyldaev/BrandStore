@@ -1,7 +1,6 @@
 package com.example.brandstore.BasketFragment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +9,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,20 +22,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.brandstore.Data.BasketData;
-import com.example.brandstore.HomeFragment.ProductData;
 import com.example.brandstore.R;
 import com.example.brandstore.SharedViewModel.SharedViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,19 +43,18 @@ public class BasketFragment extends Fragment{
 
 
     private BasketViewModel viewModel;
-    private CardView cardView;
     private int count;
     private int amount;
     private int totalPrice;
     private BasketAdapter adapter;
     private RecyclerView recyclerView;
+    private ImageView imageView;
+    private TextView empty_text;
+    private TextView textView;
+    private Button buttonNext;
     private static final String TAG = "MyActivity";
-    private List<BasketData> dataList = new ArrayList<>();
     // use to pass data between fragments
-//    private SharedViewModel sharedViewModel;
-    public BasketFragment() {
-        //1 Required empty public constructor
-    }
+    private SharedViewModel sharedViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,30 +62,59 @@ public class BasketFragment extends Fragment{
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_basket, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewBasket);
-        cardView = view.findViewById(R.id.cardView_basket);
-        final TextView textView = view.findViewById(R.id.text_over_price);
+        final CardView cardView = view.findViewById(R.id.cardView_basket);
+        imageView = view.findViewById(R.id.imageView3);
+        empty_text = view.findViewById(R.id.emty_text_view);
+        textView = view.findViewById(R.id.text_over_price);
+        buttonNext = view.findViewById(R.id.button_next);
         cardView.setBackgroundResource(R.drawable.card_corner);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         adapter  = new BasketAdapter();
         recyclerView.setAdapter(adapter);
-        this.setHasOptionsMenu(true);
+
+        buttonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                        sharedViewModel.setTextName(data);
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                final View view = inflater.inflate(R.layout.fragment_order, null);
+                DialogSheet dialogSheet = new DialogSheet(getActivity());
+                dialogSheet.setView(view)
+                        .show();
+            }
+        });
 //        grandTotal(dataList);
-//        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+//        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 //
 //        sharedViewModel.getTextCount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
 //            @Override
 //            public void onChanged(@Nullable CharSequence charSequence) {
 //
 //            }
-//        });
+//        })
+
         viewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<BasketData>>() {
             @Override
-            public void onChanged(@Nullable List<BasketData> data) {
+            public void onChanged(@Nullable final List<BasketData> data) {
                 adapter.submitList(data);
                 assert data != null;
                 textView.setText(String.valueOf(grandTotal(data)));
+                // if basket is empty, then say that it is empty
+                // если корзина пуста, то скажи что она пуста
+                if (grandTotal(data)==0){
+                    imageView.setVisibility(View.VISIBLE);
+                    empty_text.setVisibility(View.VISIBLE);
+                    cardView.setVisibility(View.GONE);
+                    setHasOptionsMenu(false);
+                }else {
+                    imageView.setVisibility(View.GONE);
+                    empty_text.setVisibility(View.GONE);
+                    cardView.setVisibility(View.VISIBLE);
+                    setHasOptionsMenu(true);
+                }
+
             }
         });
 
@@ -106,6 +133,7 @@ public class BasketFragment extends Fragment{
     private void adapterOnItemTouch() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -113,7 +141,9 @@ public class BasketFragment extends Fragment{
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 viewModel.delete(adapter.getDataAt(viewHolder.getAdapterPosition()));
-                Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar
+                        .make(getView(), R.string.deleted, Snackbar.LENGTH_SHORT);
+                snackbar.show();
             }
         }).attachToRecyclerView(recyclerView);
     }
@@ -140,29 +170,29 @@ public class BasketFragment extends Fragment{
                 count = count + data.getCount();
 
                 txt_name.setText(data.getProduct_name());
-                txt_count.setText(Integer.toString(data.getCount()));
+                txt_count.setText(String.valueOf(data.getCount()));
                 Picasso.get().load(data.getImageView()).fit().centerCrop().into(imageView);
 
-                txt_amount.setText(Integer.toString(amount));
+                txt_amount.setText(String.valueOf(amount));
                 txt_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         count = count+totalPrice;
                         amount++;
-                        txt_count.setText(Integer.toString(count));
-                        txt_amount.setText(Integer.toString(amount));
+                        txt_count.setText(String.valueOf(count));
+                        txt_amount.setText(String.valueOf(amount));
                     }
                 });
                 txt_minus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (amount == 1) {
-
+                            txt_minus.setClickable(false);
                         } else {
                             count = count-totalPrice;
                             amount--;
-                            txt_amount.setText(Integer.toString(amount));
-                            txt_count.setText(Integer.toString(count));
+                            txt_amount.setText(String.valueOf(amount));
+                            txt_count.setText(String.valueOf(count));
 
                         }
                     }
@@ -217,7 +247,9 @@ public class BasketFragment extends Fragment{
                         @Override
                         public void onClick(View v) {
                             viewModel.deleteAllNotes();
-                            Toast.makeText(getActivity(), "All files deleted", Toast.LENGTH_SHORT).show();
+                            Snackbar snackbar = Snackbar
+                                    .make(getView(), R.string.all_deleted, Snackbar.LENGTH_SHORT);
+                            snackbar.show();
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {

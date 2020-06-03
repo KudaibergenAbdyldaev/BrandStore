@@ -58,17 +58,8 @@ public class BasketAdapter extends ListAdapter<BasketData, BasketAdapter.Holder>
         Picasso.get()
                 .load(basketData.getImageView())
                 .into(holder.imageView);
-
-//        grandTotal(dataList);
         holder.overPrice.setText(String.valueOf(basketData.getCount()));
         holder.textViewAmount.setText(String.valueOf(basketData.getAmount()));
-    }
-    private void grandTotal(List<BasketData> items){
-        int totalPrice1 = 0;
-        for(int i = 0 ; i < items.size(); i++) {
-            totalPrice1 += items.get(i).getCount();
-        }
-        Log.i(TAG, Integer.toString(totalPrice1));
     }
     public BasketData getDataAt(int position) {
         return getItem(position);

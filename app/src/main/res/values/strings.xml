@@ -33,6 +33,14 @@
     <string name="btn_order">Заказать</string>
     <string name="address_dev">Address to delivery</string>
     <string name="total_price">Итого</string>
-    <string name="start_price"></string>
     <string name="btn_ready">Готово</string>
+    <string name="emty_basket_st">Sorry basket is empty!</string>
+    <string name="btn_next_st">Next</string>
+    <string name="deleted">Deleted</string>
+    <string name="all_deleted">All files deleted</string>
+    <string name="added">Added to Basket</string>
+    <string name="it_is_order_fragment">It is Order Fragment</string>
+    <string name="choose_address_delivery">"Choose your address to delivery "</string>
+    <string name="call_to_nmber">Call to number</string>
+    <string name="payment_takes_place_upon_receipt_of_the_goods">Payment takes place upon receipt of the goods.</string>
 </resources>

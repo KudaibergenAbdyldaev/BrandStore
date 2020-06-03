@@ -23,10 +23,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.brandstore.BasketFragment.BasketFragment;
 import com.example.brandstore.BasketFragment.BasketViewModel;
 import com.example.brandstore.Data.BasketData;
 import com.example.brandstore.R;
 import com.example.brandstore.SharedViewModel.SharedViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +49,7 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
     private BasketViewModel basketViewModel;
     private SharedViewModel sharedViewModel;
     private ArrayList<ProductData> list;
+    private TextView txt_name;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Foods");;
     public HomeFragment(){
 
@@ -84,7 +87,7 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                             .setSingleLineTitle(true)
                             .setColoredNavigationBar(true)
                             .setView(view);
-                    final TextView txt_name = view.findViewById(R.id.txt_name);
+                    txt_name = view.findViewById(R.id.txt_name);
                     final TextView txt_count = view.findViewById(R.id.txt_count);
                     final ImageView imageView = view.findViewById(R.id.img_product);
                     final TextView txt_plus = view.findViewById(R.id.txt_plus);
@@ -102,8 +105,8 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                         public void onClick(View v) {
                             count = count + totalPrice;
                             amount++;
-                            txt_count.setText(Integer.toString(count));
-                            txt_amount.setText(Integer.toString(amount));
+                            txt_amount.setText(String.valueOf(amount));
+                            txt_count.setText(String.valueOf(count));
                         }
                     });
                     txt_minus.setOnClickListener(new View.OnClickListener() {
@@ -113,8 +116,8 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                             } else {
                                 count = count - totalPrice;
                                 amount--;
-                                txt_amount.setText(Integer.toString(amount));
-                                txt_count.setText(Integer.toString(count));
+                                txt_amount.setText(String.valueOf(amount));
+                                txt_count.setText(String.valueOf(count));
 
                             }
                         }
@@ -125,9 +128,17 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                             BasketData basketData = new BasketData(productData.getName(),
                                     productData.getImageUrl(),
                                     productData.getPrice(),
-                                    count,amount
+                                    count, amount
                             );
-                            basketViewModel.insert(basketData);
+                            Snackbar snackbar = Snackbar
+                                    .make(getView(), "Added", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+//                            basketViewModel.insert(basketData);
+//                            if(txt_name.getText().equals(basketData.getProduct_name())){
+//                                Toast.makeText(getActivity(), "Этот товар уже добавлен", Toast.LENGTH_SHORT).show();
+//                            }else {
+                                basketViewModel.insert(basketData);
+//                            }
                             dialogSheet.dismiss();
                             //use to pass data between fragments
 //                            sharedViewModel.setTextName(txt_name.getText());
