@@ -15,6 +15,8 @@ public class BasketData {
     public int count;
     public int amount;
 
+    public BasketData() {
+    }
 
     public BasketData(String product_name, String imageView, String price, int count, int amount) {
         this.product_name = product_name;

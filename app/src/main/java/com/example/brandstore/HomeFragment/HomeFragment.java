@@ -1,9 +1,11 @@
 package com.example.brandstore.HomeFragment;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
@@ -45,15 +47,10 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
     private int amount = 1;
     private RecyclerView recyclerView;
     private HomeAdapter homeAdapter;
-    private HomeViewModel viewModel;
     private BasketViewModel basketViewModel;
-    private SharedViewModel sharedViewModel;
     private ArrayList<ProductData> list;
     private TextView txt_name;
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Foods");;
-    public HomeFragment(){
-
-    }
+    private DatabaseReference databaseReference;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,11 +60,12 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         //Using code from
         //https://developer.android.com/topic/libraries/architecture/viewmodel
-        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        HomeViewModel viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         basketViewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), userListUpdateObserver);
         list = new ArrayList<>();
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        databaseReference = FirebaseDatabase.getInstance().getReference("Foods");
         getFirebase();
         return view;
 
@@ -77,7 +75,8 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
         public void onChanged(final ArrayList<ProductData> userArrayList) {
             homeAdapter = new HomeAdapter(requireActivity(),userArrayList);
             recyclerView.setAdapter(homeAdapter);
-            homeAdapter.setOnClickListener(new HomeAdapter.OnItemClickListener() {
+            homeAdapter.setOnClickListener(new HomeAdapter.OnItemClickListener()
+            {
                 @Override
                 public void onItemClick(final int position) {
                     final ProductData productData = list.get(position);
@@ -118,7 +117,6 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                                 amount--;
                                 txt_amount.setText(String.valueOf(amount));
                                 txt_count.setText(String.valueOf(count));
-
                             }
                         }
                     });
@@ -156,7 +154,9 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     });
                     dialogSheet.show();
                 }
-            });
+
+            }
+            );
         }
     };
 
@@ -166,6 +166,7 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.basket_menu, menu);
     }
+
     private void getFirebase(){
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

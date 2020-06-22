@@ -43,4 +43,6 @@
     <string name="choose_address_delivery">"Choose your address to delivery "</string>
     <string name="call_to_nmber">Call to number</string>
     <string name="payment_takes_place_upon_receipt_of_the_goods">Payment takes place upon receipt of the goods.</string>
+    <string name="total">Total:</string>
+    <string name="currency">сом</string>
 </resources>

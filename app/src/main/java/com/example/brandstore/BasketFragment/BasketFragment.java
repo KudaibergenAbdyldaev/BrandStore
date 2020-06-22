@@ -9,12 +9,11 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +30,19 @@ import android.widget.Toast;
 import com.example.brandstore.Data.BasketData;
 import com.example.brandstore.R;
 import com.example.brandstore.SharedViewModel.SharedViewModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,17 +81,7 @@ public class BasketFragment extends Fragment{
         adapter  = new BasketAdapter();
         recyclerView.setAdapter(adapter);
 
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                        sharedViewModel.setTextName(data);
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                final View view = inflater.inflate(R.layout.fragment_order, null);
-                DialogSheet dialogSheet = new DialogSheet(getActivity());
-                dialogSheet.setView(view)
-                        .show();
-            }
-        });
+
 //        grandTotal(dataList);
 //        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 //
@@ -114,7 +112,63 @@ public class BasketFragment extends Fragment{
                     cardView.setVisibility(View.VISIBLE);
                     setHasOptionsMenu(true);
                 }
+                buttonNext.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LayoutInflater inflater = LayoutInflater.from(getContext());
+                        final View view = inflater.inflate(R.layout.fragment_order, null);
+                        final DialogSheet dialogSheet = new DialogSheet(requireActivity());
+                        dialogSheet.setView(view)
+                                .setSingleLineTitle(true)
+                                .setColoredNavigationBar(true)
+                                .show();
+                        final TextView txt_over_price = view.findViewById(R.id.text_over_price_order);
+                        final EditText edt_address = view.findViewById(R.id.edt_address);
+                        final EditText edt_phone = view.findViewById(R.id.edt_phone);
+                        final Button btn_order = view.findViewById(R.id.btn_order);
 
+
+                        btn_order.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (TextUtils.isEmpty(edt_address.getText().toString())
+                                        || TextUtils.isEmpty(edt_phone.getText().toString())){
+                                    Toast.makeText(getActivity(),"Fill in the fields!",Toast.LENGTH_SHORT).show();
+                                }else {
+                                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("BrandOrder");
+                                    assert user != null;
+                                    final String edit_address = edt_address.getText().toString().trim();
+                                    final String edit_phone = edt_phone.getText().toString().trim();
+
+                                    Map<String, Object> map= new HashMap<>();
+                                    map.put("UserAddress",edit_address);
+                                    map.put("UserPhone",edit_phone);
+                                    map.put("TotalPrice",textView.getText().toString().trim());
+                                    Map<String, Object> map2= new HashMap<>();
+                                    for (BasketData i : data) {
+                                        map2.put(i.getProduct_name(), i);
+                                    }
+                                    map.put("list", map2);
+                                    reference
+                                            .child(user.getUid())
+                                            .setValue(map)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getActivity(), "Блюдо заказано", Toast.LENGTH_SHORT).show();
+                                                    dialogSheet.dismiss();
+                                                    deleteAll();
+
+                                                }
+                                            });
+                                }
+                            }
+                        });
+
+                        txt_over_price.setText(String.valueOf(grandTotal(data)));
+                    }
+                });
             }
         });
 
@@ -122,12 +176,13 @@ public class BasketFragment extends Fragment{
         adapterSetOnClickListener();
         return view;
     }
+
     private int grandTotal(List<BasketData> items){
         int totalPrice1 = 0;
         for(int i = 0 ; i < items.size(); i++) {
             totalPrice1 += items.get(i).getCount();
         }
-        Log.i(TAG, Integer.toString(totalPrice1));
+//        Log.i(TAG, Integer.toString(totalPrice1));
         return totalPrice1;
     }
     private void adapterOnItemTouch() {
@@ -187,13 +242,11 @@ public class BasketFragment extends Fragment{
                     @Override
                     public void onClick(View v) {
                         if (amount == 1) {
-                            txt_minus.setClickable(false);
                         } else {
                             count = count-totalPrice;
                             amount--;
                             txt_amount.setText(String.valueOf(amount));
                             txt_count.setText(String.valueOf(count));
-
                         }
                     }
                 });
@@ -261,6 +314,29 @@ public class BasketFragment extends Fragment{
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void deleteAll(){
+        final DialogSheet dialogSheet = new DialogSheet(getContext());
+        dialogSheet.setSingleLineTitle(true)
+                .setTitle(R.string.delete)
+                .setMessage(R.string.delete_this)
+                .setColoredNavigationBar(true)
+                .setButtonsColorRes(R.color.color_black)
+                .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewModel.deleteAllNotes();
+                        Snackbar snackbar = Snackbar
+                                .make(getView(), R.string.all_deleted, Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogSheet.dismiss();
+                    }
+                }).show();
     }
     //use to pass data between fragments
 //    @Override
