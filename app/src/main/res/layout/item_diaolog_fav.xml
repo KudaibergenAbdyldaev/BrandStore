@@ -12,7 +12,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingStart="10dp"
             android:paddingTop="10dp"
             android:paddingEnd="10dp">
@@ -27,7 +27,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
-
             <ImageView
                 android:id="@+id/img_product"
                 android:layout_width="200dp"
@@ -53,7 +52,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_product"
                 app:layout_constraintVertical_bias="0.15" />
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_favourite"
                 android:layout_width="40dp"
@@ -72,21 +70,12 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/add_favourite_item"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:visibility="visible"
-                    android:layout_margin="2dp"
-                    android:src="@drawable/ic_favorite_border_black_24dp" />
-                <ImageView
                     android:id="@+id/delete_favourite_item"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
                     android:layout_margin="3dp"
-                    android:src="@drawable/ic_favorite_black" />
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_favorite_black"/>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -101,8 +90,7 @@
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="30dp"
             android:backgroundTint="@color/colorPrimary"
             android:padding="10dp"
             app:cardCornerRadius="10dp"
@@ -110,7 +98,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,8 +112,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="monospace"
-                    android:gravity="center"
                     android:text="-"
+                    android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -148,8 +136,8 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
                     android:fontFamily="monospace"
-                    android:gravity="center"
                     android:text="+"
+                    android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -161,17 +149,16 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
             android:background="@drawable/btn_add_bg"
-            android:text="@string/btn_add"
+            android:text="@string/btn_ready"
             android:textColor="@color/white"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/cardView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -181,11 +168,11 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/add_basket"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="0.0">
 
             <TextView
                 android:id="@+id/txt_count"

@@ -1,13 +1,11 @@
 package com.example.brandstore.HomeFragment;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 
@@ -23,13 +21,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.brandstore.BasketFragment.BasketFragment;
 import com.example.brandstore.BasketFragment.BasketViewModel;
-import com.example.brandstore.Data.BasketData;
+import com.example.brandstore.BasketRoomData.BasketData;
+import com.example.brandstore.FavouriteFragment.FavouriteViewModel;
+import com.example.brandstore.FavouriteRoomData.FavouriteData;
 import com.example.brandstore.R;
-import com.example.brandstore.SharedViewModel.SharedViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,6 +47,8 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
     private ArrayList<ProductData> list;
     private TextView txt_name;
     private DatabaseReference databaseReference;
+    private BasketData basketData;
+    private FavouriteViewModel favouriteViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,9 +60,9 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
         //https://developer.android.com/topic/libraries/architecture/viewmodel
         HomeViewModel viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         basketViewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
+        favouriteViewModel = new ViewModelProvider(requireActivity()).get(FavouriteViewModel.class);
         viewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), userListUpdateObserver);
         list = new ArrayList<>();
-        SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         databaseReference = FirebaseDatabase.getInstance().getReference("Foods");
         getFirebase();
         return view;
@@ -93,12 +91,28 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     final TextView txt_minus = view.findViewById(R.id.txt_minus);
                     final TextView txt_amount = view.findViewById(R.id.txt_amount);
                     final Button add_basket = view.findViewById(R.id.add_basket);
+                    final ImageView add_favourite_item = view.findViewById(R.id.add_favourite_item);
+                    final ImageView delete_favourite_item = view.findViewById(R.id.delete_favourite_item);
                     final int totalPrice = ((Integer.parseInt(productData.getPrice())));
                     count = count + totalPrice;
                     txt_name.setText(productData.getName());
                     txt_count.setText(productData.getPrice());
                     Picasso.get().load(productData.getImageUrl()).fit().centerCrop().into(imageView);
 
+                    add_favourite_item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            delete_favourite_item.setVisibility(View.VISIBLE);
+                            add_favourite_item.setVisibility(View.GONE);
+                        }
+                    });
+                    delete_favourite_item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            delete_favourite_item.setVisibility(View.GONE);
+                            add_favourite_item.setVisibility(View.VISIBLE);
+                        }
+                    });
                     txt_plus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -123,7 +137,8 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                     add_basket.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            BasketData basketData = new BasketData(productData.getName(),
+
+                            basketData = new BasketData(productData.getName(),
                                     productData.getImageUrl(),
                                     productData.getPrice(),
                                     count, amount
@@ -131,25 +146,29 @@ public class HomeFragment  extends Fragment implements LifecycleOwner{
                             Snackbar snackbar = Snackbar
                                     .make(getView(), "Added", Snackbar.LENGTH_SHORT);
                             snackbar.show();
-//                            basketViewModel.insert(basketData);
-//                            if(txt_name.getText().equals(basketData.getProduct_name())){
+
+//                            if(txt_name.getText().toString().trim().equals(basketData.getProduct_name())){
 //                                Toast.makeText(getActivity(), "Этот товар уже добавлен", Toast.LENGTH_SHORT).show();
-//                            }else {
+//                            }
+//                            else {
                                 basketViewModel.insert(basketData);
 //                            }
                             dialogSheet.dismiss();
-                            //use to pass data between fragments
-//                            sharedViewModel.setTextName(txt_name.getText());
-//                            sharedViewModel.setTextImage(productData.getImageUrl());
-//                            sharedViewModel.setTextAmount(txt_amount.getText());
-//                            sharedViewModel.setTextCount(productData.getPrice());
                         }
                     });
                     dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
+                            if (add_favourite_item.getVisibility() == View.GONE){
+                                FavouriteData favouriteData = new FavouriteData(productData.getName(),
+                                        productData.getImageUrl(),
+                                        productData.getPrice(),
+                                        count, amount
+                                );
+                                favouriteViewModel.insert(favouriteData);
+                            }
                             count = 0;
-                            amount =1;
+                            amount = 1;
                         }
                     });
                     dialogSheet.show();

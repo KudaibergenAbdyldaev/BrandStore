@@ -1,30 +1,27 @@
-package com.example.brandstore.Data;
+package com.example.brandstore.FavouriteRoomData;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-@Entity(tableName = "basket_table")
-public class BasketData {
+@Entity(tableName = "favourite_table")
+public class FavouriteData {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
-    public String product_name;
-    public String imageView;
-    public String price;
-    public int count;
-    public int amount;
+    private String product_name;
+    private String imageView;
+    private String price;
+    private int count;
+    private int amount;
 
-    public BasketData() {
+    public FavouriteData() {
     }
 
-    public BasketData(String product_name, String imageView, String price, int count, int amount) {
+    public FavouriteData(String product_name, String imageView, String price, int count, int amount) {
         this.product_name = product_name;
         this.imageView = imageView;
         this.price = price;
         this.count = count;
         this.amount = amount;
-
     }
 
     public int getId() {
@@ -51,6 +48,14 @@ public class BasketData {
         this.imageView = imageView;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     public int getCount() {
         return count;
     }
@@ -65,13 +70,5 @@ public class BasketData {
 
     public void setAmount(int amount) {
         this.amount = amount;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
     }
 }

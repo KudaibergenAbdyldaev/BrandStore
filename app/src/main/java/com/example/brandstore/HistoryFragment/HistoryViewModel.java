@@ -22,7 +22,7 @@ public class HistoryViewModel extends ViewModel {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BrandOrder")
             .child(user.getUid())
-            .child("list");
+            .child("UserFoods");
     public HistoryViewModel() {
         historyViewModel = new MutableLiveData<>();
 

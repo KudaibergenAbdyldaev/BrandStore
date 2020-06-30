@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.brandstore.Data.BasketData;
-import com.example.brandstore.Data.BasketRepository;
+import com.example.brandstore.BasketRoomData.BasketData;
+import com.example.brandstore.BasketRoomData.BasketRepository;
 
 import java.util.List;
 

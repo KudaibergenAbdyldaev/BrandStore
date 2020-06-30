@@ -20,9 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.brandstore.BasketFragment.BasketViewModel;
-import com.example.brandstore.Data.BasketData;
-import com.example.brandstore.HomeFragment.HomeAdapter;
-import com.example.brandstore.HomeFragment.ProductData;
+import com.example.brandstore.BasketRoomData.BasketData;
 import com.example.brandstore.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,7 +34,6 @@ import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,9 +44,10 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
     private HistoryAdapter adapter;
     private HistoryViewModel viewModel;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BrandOrder")
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+            .getReference("BrandOrder")
             .child(user.getUid())
-            .child("list");
+            .child("UserFoods");;
     private TextView txt_name;
     private int count;
     private int amount;
@@ -64,6 +62,9 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
         viewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
         viewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), userListUpdateObserver);
         basketViewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
+//        databaseReference.child("Time");
+        TextView textView = view.findViewById(R.id.text_time);
+//        textView.setText();
         return view;
     }
     Observer<ArrayList<HistoryData>> userListUpdateObserver = new Observer<ArrayList<HistoryData>>() {
@@ -71,7 +72,6 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
         public void onChanged(final ArrayList<HistoryData> userArrayList) {
             adapter = new HistoryAdapter(requireActivity(),userArrayList);
             recyclerView.setAdapter(adapter);
-
             adapter.setOnClickListener(new HistoryAdapter.OnItemClickListener()
                                            {
                                                @Override

@@ -1,4 +1,4 @@
-package com.example.brandstore.Data;
+package com.example.brandstore.BasketRoomData;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

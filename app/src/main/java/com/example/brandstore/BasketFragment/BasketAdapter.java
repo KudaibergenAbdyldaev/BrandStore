@@ -1,6 +1,5 @@
 package com.example.brandstore.BasketFragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.brandstore.Data.BasketData;
+import com.example.brandstore.BasketRoomData.BasketData;
 import com.example.brandstore.R;
 import com.squareup.picasso.Picasso;
 
@@ -21,10 +20,6 @@ import java.util.List;
 
 public class BasketAdapter extends ListAdapter<BasketData, BasketAdapter.Holder> implements Serializable {
     private OnItemClickListener listener;
-    private static final String TAG = "MyActivity";
-    public int total_count;
-    private int count;
-    List<BasketData> dataList = new ArrayList<>();
 
     public BasketAdapter() {
         super(DIFF_CALLBACK);

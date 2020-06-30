@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.brandstore.Data.BasketData;
+import com.example.brandstore.BasketRoomData.BasketData;
 import com.example.brandstore.R;
-import com.example.brandstore.SharedViewModel.SharedViewModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +37,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,6 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class BasketFragment extends Fragment{
-
 
     private BasketViewModel viewModel;
     private int count;
@@ -60,9 +58,6 @@ public class BasketFragment extends Fragment{
     private TextView empty_text;
     private TextView textView;
     private Button buttonNext;
-    private static final String TAG = "MyActivity";
-    // use to pass data between fragments
-    private SharedViewModel sharedViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,17 +75,9 @@ public class BasketFragment extends Fragment{
         recyclerView.setHasFixedSize(true);
         adapter  = new BasketAdapter();
         recyclerView.setAdapter(adapter);
-
-
-//        grandTotal(dataList);
-//        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-//
-//        sharedViewModel.getTextCount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
-//            @Override
-//            public void onChanged(@Nullable CharSequence charSequence) {
-//
-//            }
-//        })
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yyyy ");
+        final String strDate = sdf.format(c.getTime());
 
         viewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<BasketData>>() {
@@ -142,14 +129,20 @@ public class BasketFragment extends Fragment{
                                     final String edit_phone = edt_phone.getText().toString().trim();
 
                                     Map<String, Object> map= new HashMap<>();
-                                    map.put("UserAddress",edit_address);
-                                    map.put("UserPhone",edit_phone);
-                                    map.put("TotalPrice",textView.getText().toString().trim());
+
                                     Map<String, Object> map2= new HashMap<>();
                                     for (BasketData i : data) {
                                         map2.put(i.getProduct_name(), i);
                                     }
-                                    map.put("list", map2);
+
+                                    Map<String, Object> map3= new HashMap<>();
+                                    map3.put("UserAddress",edit_address);
+                                    map3.put("UserPhone",edit_phone);
+                                    map3.put("TotalPrice",textView.getText().toString().trim());
+                                    map3.put("Time",strDate);
+
+                                    map.put("UserFoods", map2);
+                                    map.put("UserInfo",map3);
                                     reference
                                             .child(user.getUid())
                                             .setValue(map)
@@ -241,10 +234,10 @@ public class BasketFragment extends Fragment{
                 txt_minus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (amount == 1) {
+                        if (txt_amount.getText().toString().trim().equals("1")) {
                         } else {
-                            count = count-totalPrice;
                             amount--;
+                            count = count-totalPrice;
                             txt_amount.setText(String.valueOf(amount));
                             txt_count.setText(String.valueOf(count));
                         }
@@ -261,11 +254,6 @@ public class BasketFragment extends Fragment{
                         basketData.setId(id);
                         viewModel.update(basketData);
                         dialogSheet.dismiss();
-                        //use to pass data between fragments
-//                            sharedViewModel.setTextName(txt_name.getText());
-//                            sharedViewModel.setTextImage(productData.getImageUrl());
-//                            sharedViewModel.setTextAmount(txt_amount.getText());
-//                            sharedViewModel.setTextCount(txt_count.getText());
                     }
                 });
                 dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -338,36 +326,5 @@ public class BasketFragment extends Fragment{
                     }
                 }).show();
     }
-    //use to pass data between fragments
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
 
-//        SharedViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-//        sharedViewModel.getTextName().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
-//            @Override
-//            public void onChanged(@Nullable CharSequence charSequence) {
-//                text_view = charSequence.toString();
-//            }
-//        });
-//        sharedViewModel.getTextImage().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
-//            @Override
-//            public void onChanged(@Nullable CharSequence charSequence) {
-//                assert charSequence != null;
-//                Picasso.get().load(charSequence.toString()).fit().centerCrop().into(imageView);
-//            }
-//        });
-//        sharedViewModel.getTextAmount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
-//            @Override
-//            public void onChanged(@Nullable CharSequence charSequence) {
-//                text_amount.setText(charSequence);
-//            }
-//        });
-//        sharedViewModel.getTextCount().observe(getViewLifecycleOwner(), new Observer<CharSequence>() {
-//            @Override
-//            public void onChanged(@Nullable CharSequence charSequence) {
-////                text_count.setText(charSequence);
-//            }
-//        });
-//    }
 }
