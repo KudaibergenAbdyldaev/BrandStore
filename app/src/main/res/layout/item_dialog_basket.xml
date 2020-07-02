@@ -70,12 +70,21 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/add_favourite_item"
+                    android:id="@+id/add_favourite_basket"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_favorite_border_black_24dp"/>
+                <ImageView
+                    android:id="@+id/delete_favourite_basket"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="3dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_favorite_border_black_24dp"/>
+                    android:visibility="gone"
+                    android:src="@drawable/ic_favorite_black"/>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

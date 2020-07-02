@@ -90,7 +90,6 @@ public class FavouriteFragment extends Fragment {
         adapter.setOnItemClickListener(new FavouriteAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(final FavouriteData data) {
-
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 final View view = inflater.inflate(R.layout.item_diaolog_fav, null);
                 final DialogSheet dialogSheet = new DialogSheet(getContext())
@@ -104,7 +103,8 @@ public class FavouriteFragment extends Fragment {
                 final TextView txt_minus = view.findViewById(R.id.txt_minus);
                 final TextView txt_amount = view.findViewById(R.id.txt_amount);
                 final Button add_basket = view.findViewById(R.id.add_basket);
-                final CardView delete_card = view.findViewById(R.id.delete_favourite_item);
+                final ImageView delete_fav = view.findViewById(R.id.delete_favourite);
+                final ImageView add_fav = view.findViewById(R.id.add_favourite);
                 totalPrice = Integer.parseInt(data.getPrice());
                 amount = data.getAmount();
                 count = count + data.getCount();
@@ -114,6 +114,20 @@ public class FavouriteFragment extends Fragment {
                 Picasso.get().load(data.getImageView()).fit().centerCrop().into(imageView);
 
                 txt_amount.setText(String.valueOf(amount));
+                delete_fav.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delete_fav.setVisibility(View.GONE);
+                        add_fav.setVisibility(View.VISIBLE);
+                    }
+                });
+                add_fav.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delete_fav.setVisibility(View.VISIBLE);
+                        add_fav.setVisibility(View.GONE);
+                    }
+                });
                 txt_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -149,6 +163,29 @@ public class FavouriteFragment extends Fragment {
                 dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        if (add_fav.getVisibility() == View.VISIBLE){
+                            final DialogSheet dialogSheet = new DialogSheet(getContext());
+                            dialogSheet.setSingleLineTitle(true)
+                                    .setTitle(R.string.delete)
+                                    .setMessage(R.string.delete_this)
+                                    .setColoredNavigationBar(true)
+                                    .setButtonsColorRes(R.color.color_black)
+                                    .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            favViewModel.delete(data);
+                                            Snackbar snackbar = Snackbar
+                                                    .make(getView(), R.string.deleted, Snackbar.LENGTH_SHORT);
+                                            snackbar.show();
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialogSheet.dismiss();
+                                        }
+                                    }).show();
+                        }
                         count = 0;
                         amount = data.getAmount();
                     }
@@ -176,7 +213,7 @@ public class FavouriteFragment extends Fragment {
                     .setButtonsColorRes(R.color.color_black)
                     .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v) {;
                             favViewModel.deleteAllNotes();
                             Snackbar snackbar = Snackbar
                                     .make(getView(), R.string.all_deleted, Snackbar.LENGTH_SHORT);
@@ -192,28 +229,5 @@ public class FavouriteFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-    private void deleteAll(){
-        final DialogSheet dialogSheet = new DialogSheet(getContext());
-        dialogSheet.setSingleLineTitle(true)
-                .setTitle(R.string.delete)
-                .setMessage(R.string.delete_this)
-                .setColoredNavigationBar(true)
-                .setButtonsColorRes(R.color.color_black)
-                .setPositiveButton(android.R.string.ok, new DialogSheet.OnPositiveClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewModel.deleteAllNotes();
-                        Snackbar snackbar = Snackbar
-                                .make(getView(), R.string.all_deleted, Snackbar.LENGTH_SHORT);
-                        snackbar.show();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogSheet.OnNegativeClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialogSheet.dismiss();
-                    }
-                }).show();
     }
 }

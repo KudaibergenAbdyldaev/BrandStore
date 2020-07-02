@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import com.example.brandstore.BasketFragment.BasketViewModel;
 import com.example.brandstore.BasketRoomData.BasketData;
+import com.example.brandstore.FavouriteFragment.FavouriteViewModel;
+import com.example.brandstore.FavouriteRoomData.FavouriteData;
 import com.example.brandstore.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,12 +44,12 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
 
     private RecyclerView recyclerView;
     private HistoryAdapter adapter;
-    private HistoryViewModel viewModel;
+    private FavouriteViewModel favouriteViewModel;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance()
             .getReference("BrandOrder")
-            .child(user.getUid())
-            .child("UserFoods");;
+            .child(user.getUid());
     private TextView txt_name;
     private int count;
     private int amount;
@@ -55,19 +57,16 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         this.setHasOptionsMenu(true);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_history);
-        viewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
+        HistoryViewModel viewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
         viewModel.getUserMutableLiveData().observe(getViewLifecycleOwner(), userListUpdateObserver);
+        favouriteViewModel = new ViewModelProvider(requireActivity()).get(FavouriteViewModel.class);
         basketViewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
-//        databaseReference.child("Time");
-        TextView textView = view.findViewById(R.id.text_time);
-//        textView.setText();
         return view;
     }
-    Observer<ArrayList<HistoryData>> userListUpdateObserver = new Observer<ArrayList<HistoryData>>() {
+    private Observer<ArrayList<HistoryData>> userListUpdateObserver = new Observer<ArrayList<HistoryData>>() {
         @Override
         public void onChanged(final ArrayList<HistoryData> userArrayList) {
             adapter = new HistoryAdapter(requireActivity(),userArrayList);
@@ -90,6 +89,8 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
                                                    final TextView txt_minus = view.findViewById(R.id.txt_minus);
                                                    final TextView txt_amount = view.findViewById(R.id.txt_amount);
                                                    final Button add_basket = view.findViewById(R.id.add_basket);
+                                                   final ImageView add_favourite_item = view.findViewById(R.id.add_favourite_item);
+                                                   final ImageView delete_favourite_item = view.findViewById(R.id.delete_favourite_item);
                                                    final int totalPrice = ((Integer.parseInt(productData.getPrice())));
                                                    count = count + productData.getCount();
                                                    amount = productData.getAmount();
@@ -98,6 +99,21 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
                                                    txt_name.setText(productData.getProduct_name());
                                                    txt_count.setText(String.valueOf(productData.getCount()));
                                                    Picasso.get().load(productData.getImageView()).fit().centerCrop().into(imageView);
+
+                                                   add_favourite_item.setOnClickListener(new View.OnClickListener() {
+                                                       @Override
+                                                       public void onClick(View v) {
+                                                           delete_favourite_item.setVisibility(View.VISIBLE);
+                                                           add_favourite_item.setVisibility(View.GONE);
+                                                       }
+                                                   });
+                                                   delete_favourite_item.setOnClickListener(new View.OnClickListener() {
+                                                       @Override
+                                                       public void onClick(View v) {
+                                                           delete_favourite_item.setVisibility(View.GONE);
+                                                           add_favourite_item.setVisibility(View.VISIBLE);
+                                                       }
+                                                   });
 
                                                    txt_plus.setOnClickListener(new View.OnClickListener() {
                                                        @Override
@@ -138,6 +154,14 @@ public class HistoryFragment extends Fragment implements LifecycleOwner {
                                                    dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                                        @Override
                                                        public void onDismiss(DialogInterface dialog) {
+                                                           if (add_favourite_item.getVisibility() == View.GONE){
+                                                               FavouriteData favouriteData = new FavouriteData(productData.getProduct_name(),
+                                                                       productData.getImageView(),
+                                                                       productData.getPrice(),
+                                                                       count, amount
+                                                               );
+                                                               favouriteViewModel.insert(favouriteData);
+                                                           }
                                                            count = 0;
                                                            amount =1;
                                                        }

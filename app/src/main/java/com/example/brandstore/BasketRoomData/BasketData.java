@@ -13,6 +13,10 @@ public class BasketData {
     private String price;
     private int count;
     private int amount;
+    private String userAddress;
+    private String userPhone;
+    private String totalPrice;
+    private String time;
 
     public BasketData() {
     }
@@ -24,6 +28,38 @@ public class BasketData {
         this.count = count;
         this.amount = amount;
 
+    }
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public int getId() {

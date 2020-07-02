@@ -27,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.brandstore.BasketRoomData.BasketData;
+import com.example.brandstore.FavouriteFragment.FavouriteViewModel;
+import com.example.brandstore.FavouriteRoomData.FavouriteData;
 import com.example.brandstore.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -38,6 +40,7 @@ import com.marcoscg.dialogsheet.DialogSheet;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,7 @@ import java.util.Map;
 public class BasketFragment extends Fragment{
 
     private BasketViewModel viewModel;
+    private FavouriteViewModel favouriteViewModel;
     private int count;
     private int amount;
     private int totalPrice;
@@ -78,6 +82,7 @@ public class BasketFragment extends Fragment{
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yyyy ");
         final String strDate = sdf.format(c.getTime());
+        favouriteViewModel = new ViewModelProvider(requireActivity()).get(FavouriteViewModel.class);
 
         viewModel = new ViewModelProvider(requireActivity()).get(BasketViewModel.class);
         viewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<BasketData>>() {
@@ -127,24 +132,41 @@ public class BasketFragment extends Fragment{
                                     assert user != null;
                                     final String edit_address = edt_address.getText().toString().trim();
                                     final String edit_phone = edt_phone.getText().toString().trim();
-
-                                    Map<String, Object> map= new HashMap<>();
+                                    String key = reference.push().getKey();
+                                    final Map<String, Object> map = new HashMap<>();
+                                    for (BasketData i : data) {
+                                        i.setUserAddress(edit_address);
+                                        i.setUserPhone(edit_phone);
+                                        i.setTime(strDate);
+                                        i.setTotalPrice(textView.getText().toString().trim());
+                                        map.put(i.getProduct_name(), i);
+                                    }
+                                    Map<String, Object> mapC= new HashMap<>();
 
                                     Map<String, Object> map2= new HashMap<>();
                                     for (BasketData i : data) {
                                         map2.put(i.getProduct_name(), i);
                                     }
 
-                                    Map<String, Object> map3= new HashMap<>();
-                                    map3.put("UserAddress",edit_address);
-                                    map3.put("UserPhone",edit_phone);
-                                    map3.put("TotalPrice",textView.getText().toString().trim());
-                                    map3.put("Time",strDate);
 
-                                    map.put("UserFoods", map2);
-                                    map.put("UserInfo",map3);
-                                    reference
-                                            .child(user.getUid())
+                                    Map<String, Object> map3= new HashMap<>();
+                                    map3.put("userAddress",edit_address);
+                                    map3.put("userPhone",edit_phone);
+                                    map3.put("totalPrice",textView.getText().toString().trim());
+                                    map3.put("time",strDate);;
+
+                                    DatabaseReference referenceView = FirebaseDatabase.getInstance().getReference("WebOrder");
+                                    String keyView = referenceView.push().getKey();
+                                    assert keyView != null;
+                                    referenceView
+                                            .child("UserInfo")
+                                            .child(keyView)
+                                            .setValue(map3);
+                                    referenceView
+                                            .child("UserOrder")
+//                                            .child(keyView)
+                                            .setValue(map2);
+                                    reference.child(user.getUid())
                                             .setValue(map)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -213,6 +235,9 @@ public class BasketFragment extends Fragment{
                 final TextView txt_minus = view.findViewById(R.id.txt_minus);
                 final TextView txt_amount = view.findViewById(R.id.txt_amount);
                 final Button add_basket = view.findViewById(R.id.add_basket);
+                final ImageView add_favourite_basket = view.findViewById(R.id.add_favourite_basket);
+                final ImageView delete_favourite_basket = view.findViewById(R.id.delete_favourite_basket);
+
                 totalPrice = Integer.parseInt(data.getPrice());
                 amount = data.getAmount();
                 count = count + data.getCount();
@@ -222,6 +247,21 @@ public class BasketFragment extends Fragment{
                 Picasso.get().load(data.getImageView()).fit().centerCrop().into(imageView);
 
                 txt_amount.setText(String.valueOf(amount));
+
+                add_favourite_basket.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delete_favourite_basket.setVisibility(View.VISIBLE);
+                        add_favourite_basket.setVisibility(View.GONE);
+                    }
+                });
+                delete_favourite_basket.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delete_favourite_basket.setVisibility(View.GONE);
+                        add_favourite_basket.setVisibility(View.VISIBLE);
+                    }
+                });
                 txt_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -259,6 +299,14 @@ public class BasketFragment extends Fragment{
                 dialogSheet.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        if (add_favourite_basket.getVisibility() == View.GONE){
+                            FavouriteData favouriteData = new FavouriteData(data.getProduct_name(),
+                                    data.getImageView(),
+                                    data.getPrice(),
+                                    count, amount
+                            );
+                            favouriteViewModel.insert(favouriteData);
+                        }
                         count = 0;
                         amount = data.getAmount();
                     }

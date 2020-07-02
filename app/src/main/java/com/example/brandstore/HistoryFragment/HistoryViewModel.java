@@ -20,9 +20,9 @@ public class HistoryViewModel extends ViewModel {
     private MutableLiveData<ArrayList<HistoryData>> historyViewModel;
     private ArrayList<HistoryData> historyArrayList;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BrandOrder")
-            .child(user.getUid())
-            .child("UserFoods");
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+            .getReference("BrandOrder")
+            .child(user.getUid());
     public HistoryViewModel() {
         historyViewModel = new MutableLiveData<>();
 
@@ -41,6 +41,7 @@ public class HistoryViewModel extends ViewModel {
 
     private void populateList(){
         historyArrayList = new ArrayList<>();
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

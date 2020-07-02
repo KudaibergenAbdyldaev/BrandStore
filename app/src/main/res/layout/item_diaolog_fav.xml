@@ -70,12 +70,21 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/delete_favourite_item"
+                    android:id="@+id/delete_favourite"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="3dp"
                     android:layout_gravity="center"
+                    android:visibility="visible"
                     android:src="@drawable/ic_favorite_black"/>
+                <ImageView
+                    android:id="@+id/add_favourite"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_favorite_border_black_24dp"/>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -152,7 +161,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/btn_add_bg"
-            android:text="@string/btn_ready"
+            android:text="@string/btn_add"
             android:textColor="@color/white"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
